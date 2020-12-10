@@ -20,7 +20,8 @@ import MDCMenuSurfaceFoundation from '@material/menu-surface/foundation';
 import {addHasRemoveClass, BaseElement} from '@material/mwc-base/base-element';
 import {observer} from '@material/mwc-base/observer';
 import {deepActiveElementPath, doesElementContainFocus} from '@material/mwc-base/utils';
-import {html, internalProperty, property, query} from 'lit-element';
+import {html} from 'lit-element';
+import {internalProperty, property, query} from 'lit-element/lib/decorators';
 import {classMap} from 'lit-html/directives/class-map';
 import {styleMap} from 'lit-html/directives/style-map';
 

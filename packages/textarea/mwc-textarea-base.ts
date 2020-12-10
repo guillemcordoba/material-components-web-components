@@ -16,7 +16,8 @@ limitations under the License.
 */
 
 import {TextAreaCharCounter, TextFieldBase, TextFieldInputMode, TextFieldType} from '@material/mwc-textfield/mwc-textfield-base';
-import {ComplexAttributeConverter, html, property, query, TemplateResult} from 'lit-element';
+import {ComplexAttributeConverter, html, TemplateResult} from 'lit-element';
+import {property, query} from 'lit-element/lib/decorators';
 import {classMap} from 'lit-html/directives/class-map';
 import {ifDefined} from 'lit-html/directives/if-defined';
 import {live} from 'lit-html/directives/live';

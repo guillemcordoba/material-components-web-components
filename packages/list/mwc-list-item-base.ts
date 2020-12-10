@@ -15,15 +15,21 @@
  limitations under the License.
  */
 
-import '@material/mwc-ripple/mwc-ripple';
+import "@material/mwc-ripple/mwc-ripple";
 
-import {observer} from '@material/mwc-base/observer';
-import {Ripple} from '@material/mwc-ripple/mwc-ripple';
-import {RippleHandlers} from '@material/mwc-ripple/ripple-handlers';
-import {html, internalProperty, LitElement, property, query, queryAsync} from 'lit-element';
-import {classMap} from 'lit-html/directives/class-map';
+import { observer } from "@material/mwc-base/observer";
+import { Ripple } from "@material/mwc-ripple/mwc-ripple";
+import { RippleHandlers } from "@material/mwc-ripple/ripple-handlers";
+import { html, LitElement } from "lit-element";
+import {
+  internalProperty,
+  property,
+  query,
+  queryAsync,
+} from "lit-element/lib/decorators";
+import { classMap } from "lit-html/directives/class-map";
 
-export type SelectionSource = 'interaction'|'property';
+export type SelectionSource = "interaction" | "property";
 export interface RequestSelectedDetail {
   selected: boolean;
   source: SelectionSource;
@@ -34,56 +40,65 @@ export interface Layoutable {
   debouncedLayout?: (updateItems?: boolean) => void | undefined;
 }
 
-export type GraphicType = 'avatar'|'icon'|'medium'|'large'|'control'|null;
+export type GraphicType =
+  | "avatar"
+  | "icon"
+  | "medium"
+  | "large"
+  | "control"
+  | null;
 
 /**
  * @fires request-selected {RequestSelectedDetail}
  * @fires list-item-rendered
  */
 export class ListItemBase extends LitElement {
-  @query('slot') protected slotElement!: HTMLSlotElement|null;
-  @queryAsync('mwc-ripple') ripple!: Promise<Ripple|null>;
+  @query("slot") protected slotElement!: HTMLSlotElement | null;
+  @queryAsync("mwc-ripple") ripple!: Promise<Ripple | null>;
 
-  @property({type: String}) value = '';
-  @property({type: String, reflect: true}) group: string|null = null;
-  @property({type: Number, reflect: true}) tabindex = -1;
-  @property({type: Boolean, reflect: true})
-  @observer(function(this: ListItemBase, value: boolean) {
+  @property({ type: String }) value = "";
+  @property({ type: String, reflect: true }) group: string | null = null;
+  @property({ type: Number, reflect: true }) tabindex = -1;
+  @property({ type: Boolean, reflect: true })
+  @observer(function (this: ListItemBase, value: boolean) {
     if (value) {
-      this.setAttribute('aria-disabled', 'true');
+      this.setAttribute("aria-disabled", "true");
     } else {
-      this.setAttribute('aria-disabled', 'false');
+      this.setAttribute("aria-disabled", "false");
     }
   })
   disabled = false;
-  @property({type: Boolean, reflect: true}) twoline = false;
-  @property({type: Boolean, reflect: true}) activated = false;
-  @property({type: String, reflect: true}) graphic: GraphicType = null;
-  @property({type: Boolean}) multipleGraphics = false;
-  @property({type: Boolean}) hasMeta = false;
-  @property({type: Boolean, reflect: true})
-  @observer(function(this: ListItemBase, value: boolean) {
+  @property({ type: Boolean, reflect: true }) twoline = false;
+  @property({ type: Boolean, reflect: true }) activated = false;
+  @property({ type: String, reflect: true }) graphic: GraphicType = null;
+  @property({ type: Boolean }) multipleGraphics = false;
+  @property({ type: Boolean }) hasMeta = false;
+  @property({ type: Boolean, reflect: true })
+  @observer(function (this: ListItemBase, value: boolean) {
     if (value) {
-      this.removeAttribute('aria-checked');
-      this.removeAttribute('mwc-list-item');
+      this.removeAttribute("aria-checked");
+      this.removeAttribute("mwc-list-item");
       this.selected = false;
       this.activated = false;
       this.tabIndex = -1;
     } else {
-      this.setAttribute('mwc-list-item', '');
+      this.setAttribute("mwc-list-item", "");
     }
   })
   noninteractive = false;
-  @property({type: Boolean, reflect: true})
-  @observer(function(this: ListItemBase, value: boolean) {
-    const role = this.getAttribute('role');
-    const isAriaSelectable = role === 'gridcell' || role === 'option' ||
-        role === 'row' || role === 'tab';
+  @property({ type: Boolean, reflect: true })
+  @observer(function (this: ListItemBase, value: boolean) {
+    const role = this.getAttribute("role");
+    const isAriaSelectable =
+      role === "gridcell" ||
+      role === "option" ||
+      role === "row" ||
+      role === "tab";
 
     if (isAriaSelectable && value) {
-      this.setAttribute('aria-selected', 'true');
+      this.setAttribute("aria-selected", "true");
     } else if (isAriaSelectable) {
-      this.setAttribute('aria-selected', 'false');
+      this.setAttribute("aria-selected", "false");
     }
 
     if (this._firstChanged) {
@@ -95,12 +110,12 @@ export class ListItemBase extends LitElement {
       return;
     }
 
-    this.fireRequestSelected(value, 'property');
+    this.fireRequestSelected(value, "property");
   })
   selected = false;
 
   @internalProperty() protected shouldRenderRipple = false;
-  @internalProperty() _managingList: Layoutable|null = null;
+  @internalProperty() _managingList: Layoutable | null = null;
 
   protected boundOnClick = this.onClick.bind(this);
   protected _firstChanged = true;
@@ -109,55 +124,52 @@ export class ListItemBase extends LitElement {
     this.shouldRenderRipple = true;
     return this.ripple;
   });
-  protected listeners: ({
+  protected listeners: {
     target: Element;
     eventNames: string[];
     cb: EventListenerOrEventListenerObject;
-  })[] =
-      [
-        {
-          target: this,
-          eventNames: ['click'],
-          cb:
-              () => {
-                this.onClick();
-              },
-        },
-        {
-          target: this,
-          eventNames: ['mouseenter'],
-          cb: this.rippleHandlers.startHover,
-        },
-        {
-          target: this,
-          eventNames: ['mouseleave'],
-          cb: this.rippleHandlers.endHover,
-        },
-        {
-          target: this,
-          eventNames: ['focus'],
-          cb: this.rippleHandlers.startFocus,
-        },
-        {
-          target: this,
-          eventNames: ['blur'],
-          cb: this.rippleHandlers.endFocus,
-        },
-        {
-          target: this,
-          eventNames: ['mousedown', 'touchstart'],
-          cb:
-              (e: Event) => {
-                const name = e.type;
-                this.onDown(name === 'mousedown' ? 'mouseup' : 'touchend', e);
-              },
-        },
-      ];
+  }[] = [
+    {
+      target: this,
+      eventNames: ["click"],
+      cb: () => {
+        this.onClick();
+      },
+    },
+    {
+      target: this,
+      eventNames: ["mouseenter"],
+      cb: this.rippleHandlers.startHover,
+    },
+    {
+      target: this,
+      eventNames: ["mouseleave"],
+      cb: this.rippleHandlers.endHover,
+    },
+    {
+      target: this,
+      eventNames: ["focus"],
+      cb: this.rippleHandlers.startFocus,
+    },
+    {
+      target: this,
+      eventNames: ["blur"],
+      cb: this.rippleHandlers.endFocus,
+    },
+    {
+      target: this,
+      eventNames: ["mousedown", "touchstart"],
+      cb: (e: Event) => {
+        const name = e.type;
+        this.onDown(name === "mousedown" ? "mouseup" : "touchend", e);
+      },
+    },
+  ];
 
   get text() {
     const textContent = this.textContent;
 
-    return textContent ? textContent.trim() : '';
+    return textContent ? textContent.trim() : "";
   }
 
   render() {
@@ -165,23 +177,16 @@ export class ListItemBase extends LitElement {
     const graphic = this.graphic ? this.renderGraphic() : html``;
     const meta = this.hasMeta ? this.renderMeta() : html``;
 
-    return html`
-      ${this.renderRipple()}
-      ${graphic}
-      ${text}
-      ${meta}`;
+    return html` ${this.renderRipple()} ${graphic} ${text} ${meta}`;
   }
 
   protected renderRipple() {
     if (this.shouldRenderRipple) {
-      return html`
-      <mwc-ripple
-        .activated=${this.activated}>
-      </mwc-ripple>`;
+      return html` <mwc-ripple .activated=${this.activated}> </mwc-ripple>`;
     } else if (this.activated) {
       return html`<div class="fake-activated-ripple"></div>`;
     } else {
-      return '';
+      return "";
     }
   }
 
@@ -190,26 +195,22 @@ export class ListItemBase extends LitElement {
       multi: this.multipleGraphics,
     };
 
-    return html`
-      <span class="mdc-list-item__graphic material-icons ${
-        classMap(graphicClasses)}">
-        <slot name="graphic"></slot>
-      </span>`;
+    return html` <span
+      class="mdc-list-item__graphic material-icons ${classMap(graphicClasses)}"
+    >
+      <slot name="graphic"></slot>
+    </span>`;
   }
 
   protected renderMeta() {
-    return html`
-      <span class="mdc-list-item__meta material-icons">
-        <slot name="meta"></slot>
-      </span>`;
+    return html` <span class="mdc-list-item__meta material-icons">
+      <slot name="meta"></slot>
+    </span>`;
   }
 
   protected renderText() {
     const inner = this.twoline ? this.renderTwoline() : this.renderSingleLine();
-    return html`
-      <span class="mdc-list-item__text">
-        ${inner}
-      </span>`;
+    return html` <span class="mdc-list-item__text"> ${inner} </span>`;
   }
 
   protected renderSingleLine() {
@@ -228,7 +229,7 @@ export class ListItemBase extends LitElement {
   }
 
   protected onClick() {
-    this.fireRequestSelected(!this.selected, 'interaction');
+    this.fireRequestSelected(!this.selected, "interaction");
   }
 
   protected onDown(upName: string, evt: Event) {
@@ -247,8 +248,9 @@ export class ListItemBase extends LitElement {
     }
 
     const customEv = new CustomEvent<RequestSelectedDetail>(
-        'request-selected',
-        {bubbles: true, composed: true, detail: {source, selected}});
+      "request-selected",
+      { bubbles: true, composed: true, detail: { source, selected } }
+    );
 
     this.dispatchEvent(customEv);
   }
@@ -257,13 +259,14 @@ export class ListItemBase extends LitElement {
     super.connectedCallback();
 
     if (!this.noninteractive) {
-      this.setAttribute('mwc-list-item', '');
+      this.setAttribute("mwc-list-item", "");
     }
 
     for (const listener of this.listeners) {
       for (const eventName of listener.eventNames) {
-        listener.target.addEventListener(
-            eventName, listener.cb, {passive: true});
+        listener.target.addEventListener(eventName, listener.cb, {
+          passive: true,
+        });
       }
     }
   }
@@ -278,15 +281,18 @@ export class ListItemBase extends LitElement {
     }
 
     if (this._managingList) {
-      this._managingList.debouncedLayout ?
-          this._managingList.debouncedLayout(true) :
-          this._managingList.layout(true);
+      this._managingList.debouncedLayout
+        ? this._managingList.debouncedLayout(true)
+        : this._managingList.layout(true);
     }
   }
 
   // composed flag, event fire through shadow root and up through composed tree
   protected firstUpdated() {
-    const ev = new Event('list-item-rendered', {bubbles: true, composed: true});
+    const ev = new Event("list-item-rendered", {
+      bubbles: true,
+      composed: true,
+    });
     this.dispatchEvent(ev);
   }
 }

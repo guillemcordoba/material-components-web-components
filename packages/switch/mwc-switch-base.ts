@@ -22,7 +22,8 @@ import {Ripple} from '@material/mwc-ripple/mwc-ripple';
 import {RippleHandlers} from '@material/mwc-ripple/ripple-handlers';
 import {MDCSwitchAdapter} from '@material/switch/adapter';
 import MDCSwitchFoundation from '@material/switch/foundation';
-import {eventOptions, html, internalProperty, property, query, queryAsync} from 'lit-element';
+import {html} from 'lit-element';
+import {eventOptions, internalProperty, property, query, queryAsync} from 'lit-element/lib/decorators';
 
 export class SwitchBase extends FormElement {
   @property({type: Boolean})

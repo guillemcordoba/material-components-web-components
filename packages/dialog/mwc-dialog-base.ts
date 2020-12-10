@@ -14,27 +14,31 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import 'blocking-elements';
-import 'wicg-inert';
+import "blocking-elements";
+import "wicg-inert";
 
-import {MDCDialogAdapter} from '@material/dialog/adapter';
-import {cssClasses} from '@material/dialog/constants';
-import MDCDialogFoundation from '@material/dialog/foundation';
-import {applyPassive} from '@material/dom/events';
-import {closest, matches} from '@material/dom/ponyfill';
-import {addHasRemoveClass, BaseElement} from '@material/mwc-base/base-element';
-import {observer} from '@material/mwc-base/observer';
-import {DocumentWithBlockingElements} from 'blocking-elements';
-import {html, property, query} from 'lit-element';
-import {classMap} from 'lit-html/directives/class-map';
+import { MDCDialogAdapter } from "@material/dialog/adapter";
+import { cssClasses } from "@material/dialog/constants";
+import MDCDialogFoundation from "@material/dialog/foundation";
+import { applyPassive } from "@material/dom/events";
+import { closest, matches } from "@material/dom/ponyfill";
+import {
+  addHasRemoveClass,
+  BaseElement,
+} from "@material/mwc-base/base-element";
+import { observer } from "@material/mwc-base/observer";
+import { DocumentWithBlockingElements } from "blocking-elements";
+import { html } from "lit-element";
+import { property, query } from "lit-element/lib/decorators";
+import { classMap } from "lit-html/directives/class-map";
 
-export {MDCDialogCloseEventDetail} from '@material/dialog/types';
+export { MDCDialogCloseEventDetail } from "@material/dialog/types";
 
-const blockingElements =
-    (document as DocumentWithBlockingElements).$blockingElements;
+const blockingElements = (document as DocumentWithBlockingElements)
+  .$blockingElements;
 
 export class DialogBase extends BaseElement {
-  @query('.mdc-dialog') protected mdcRoot!: HTMLDivElement;
+  @query(".mdc-dialog") protected mdcRoot!: HTMLDivElement;
 
   // _actionItemsSlot should have type HTMLSlotElement, but when TypeScript's
   // emitDecoratorMetadata is enabled, the HTMLSlotElement constructor will
@@ -48,36 +52,36 @@ export class DialogBase extends BaseElement {
   // undefined" error in browsers that don't define it (e.g. IE11).
   @query('slot[name="secondaryAction"]') protected secondarySlot!: HTMLElement;
 
-  @query('#contentSlot') protected contentSlot!: HTMLElement;
+  @query("#contentSlot") protected contentSlot!: HTMLElement;
 
-  @query('.mdc-dialog__content') protected contentElement!: HTMLDivElement;
+  @query(".mdc-dialog__content") protected contentElement!: HTMLDivElement;
 
-  @query('.mdc-container') protected conatinerElement!: HTMLDivElement;
+  @query(".mdc-container") protected conatinerElement!: HTMLDivElement;
 
-  @property({type: Boolean}) hideActions = false;
+  @property({ type: Boolean }) hideActions = false;
 
-  @property({type: Boolean})
-  @observer(function(this: DialogBase) {
+  @property({ type: Boolean })
+  @observer(function (this: DialogBase) {
     this.forceLayout();
   })
   stacked = false;
 
-  @property({type: String}) heading = '';
+  @property({ type: String }) heading = "";
 
-  @property({type: String})
-  @observer(function(this: DialogBase, newAction: string) {
+  @property({ type: String })
+  @observer(function (this: DialogBase, newAction: string) {
     this.mdcFoundation.setScrimClickAction(newAction);
   })
-  scrimClickAction = 'close';
+  scrimClickAction = "close";
 
-  @property({type: String})
-  @observer(function(this: DialogBase, newAction: string) {
+  @property({ type: String })
+  @observer(function (this: DialogBase, newAction: string) {
     this.mdcFoundation.setEscapeKeyAction(newAction);
   })
-  escapeKeyAction = 'close';
+  escapeKeyAction = "close";
 
-  @property({type: Boolean, reflect: true})
-  @observer(function(this: DialogBase, isOpen: boolean) {
+  @property({ type: Boolean, reflect: true })
+  @observer(function (this: DialogBase, isOpen: boolean) {
     // Check isConnected because we could have been disconnected before first
     // update. If we're now closed, then we shouldn't start the MDC foundation
     // opening animation. If we're now closed, then we've already closed the
@@ -95,35 +99,36 @@ export class DialogBase extends BaseElement {
   })
   open = false;
 
-  @property() defaultAction = 'close';
-  @property() actionAttribute = 'dialogAction';
-  @property() initialFocusAttribute = 'dialogInitialFocus';
+  @property() defaultAction = "close";
+  @property() actionAttribute = "dialogAction";
+  @property() initialFocusAttribute = "dialogInitialFocus";
 
   private closingDueToDisconnect?: boolean;
 
-  protected get primaryButton(): HTMLElement|null {
+  protected get primaryButton(): HTMLElement | null {
     let assignedNodes = (this.primarySlot as HTMLSlotElement).assignedNodes();
     assignedNodes = assignedNodes.filter((node) => node instanceof HTMLElement);
     const button = assignedNodes[0] as HTMLElement | undefined;
     return button ? button : null;
   }
 
-  protected currentAction: string|undefined;
+  protected currentAction: string | undefined;
   protected mdcFoundationClass = MDCDialogFoundation;
   protected mdcFoundation!: MDCDialogFoundation;
-  protected boundLayout: (() => void)|null = null;
-  protected boundHandleClick: ((ev: MouseEvent) => void)|null = null;
-  protected boundHandleKeydown: ((ev: KeyboardEvent) => void)|null = null;
+  protected boundLayout: (() => void) | null = null;
+  protected boundHandleClick: ((ev: MouseEvent) => void) | null = null;
+  protected boundHandleKeydown: ((ev: KeyboardEvent) => void) | null = null;
   protected boundHandleDocumentKeydown:
-      ((ev: KeyboardEvent) => void)|null = null;
+    | ((ev: KeyboardEvent) => void)
+    | null = null;
 
   protected emitNotification(name: string, action?: string) {
-    const init: CustomEventInit = {detail: action ? {action} : {}};
+    const init: CustomEventInit = { detail: action ? { action } : {} };
     const ev = new CustomEvent(name, init);
     this.dispatchEvent(ev);
   }
 
-  protected getInitialFocusEl(): HTMLElement|null {
+  protected getInitialFocusEl(): HTMLElement | null {
     const initFocusSelector = `[${this.initialFocusAttribute}]`;
 
     // only search light DOM. This typically handles all the cases
@@ -135,31 +140,38 @@ export class DialogBase extends BaseElement {
 
     // if not in light dom, search each flattened distributed node.
     const primarySlot = this.primarySlot as HTMLSlotElement;
-    const primaryNodes = primarySlot.assignedNodes({flatten: true});
+    const primaryNodes = primarySlot.assignedNodes({ flatten: true });
     const primaryFocusElement = this.searchNodeTreesForAttribute(
-        primaryNodes, this.initialFocusAttribute);
+      primaryNodes,
+      this.initialFocusAttribute
+    );
     if (primaryFocusElement) {
       return primaryFocusElement;
     }
 
     const secondarySlot = this.secondarySlot as HTMLSlotElement;
-    const secondaryNodes = secondarySlot.assignedNodes({flatten: true});
+    const secondaryNodes = secondarySlot.assignedNodes({ flatten: true });
     const secondaryFocusElement = this.searchNodeTreesForAttribute(
-        secondaryNodes, this.initialFocusAttribute);
+      secondaryNodes,
+      this.initialFocusAttribute
+    );
     if (secondaryFocusElement) {
       return secondaryFocusElement;
     }
 
-
     const contentSlot = this.contentSlot as HTMLSlotElement;
-    const contentNodes = contentSlot.assignedNodes({flatten: true});
+    const contentNodes = contentSlot.assignedNodes({ flatten: true });
     const initFocusElement = this.searchNodeTreesForAttribute(
-        contentNodes, this.initialFocusAttribute);
+      contentNodes,
+      this.initialFocusAttribute
+    );
     return initFocusElement;
   }
 
-  private searchNodeTreesForAttribute(nodes: Node[], attribute: string):
-      HTMLElement|null {
+  private searchNodeTreesForAttribute(
+    nodes: Node[],
+    attribute: string
+  ): HTMLElement | null {
     for (const node of nodes) {
       if (!(node instanceof HTMLElement)) {
         continue;
@@ -181,8 +193,8 @@ export class DialogBase extends BaseElement {
   protected createAdapter(): MDCDialogAdapter {
     return {
       ...addHasRemoveClass(this.mdcRoot),
-      addBodyClass: () => document.body.style.overflow = 'hidden',
-      removeBodyClass: () => document.body.style.overflow = '',
+      addBodyClass: () => (document.body.style.overflow = "hidden"),
+      removeBodyClass: () => (document.body.style.overflow = ""),
       areButtonsStacked: () => this.stacked,
       clickDefaultButton: () => {
         const primary = this.primaryButton;
@@ -191,14 +203,16 @@ export class DialogBase extends BaseElement {
         }
       },
       eventTargetMatches: (target, selector) =>
-          target ? matches(target as Element, selector) : false,
+        target ? matches(target as Element, selector) : false,
       getActionFromEvent: (e: Event) => {
         if (!e.target) {
-          return '';
+          return "";
         }
 
-        const element =
-            closest(e.target as Element, `[${this.actionAttribute}]`);
+        const element = closest(
+          e.target as Element,
+          `[${this.actionAttribute}]`
+        );
         const action = element && element.getAttribute(this.actionAttribute);
         return action;
       },
@@ -209,7 +223,7 @@ export class DialogBase extends BaseElement {
         const el = this.contentElement;
         return el ? el.scrollHeight > el.offsetHeight : false;
       },
-      notifyClosed: (action) => this.emitNotification('closed', action),
+      notifyClosed: (action) => this.emitNotification("closed", action),
       notifyClosing: (action) => {
         if (!this.closingDueToDisconnect) {
           // Don't set our open state to closed just because we were
@@ -217,14 +231,16 @@ export class DialogBase extends BaseElement {
           // re-open.
           this.open = false;
         }
-        this.emitNotification('closing', action);
+        this.emitNotification("closing", action);
       },
-      notifyOpened: () => this.emitNotification('opened'),
+      notifyOpened: () => this.emitNotification("opened"),
       notifyOpening: () => {
         this.open = true;
-        this.emitNotification('opening');
+        this.emitNotification("opening");
       },
-      reverseButtons: () => { /* handled by render fn */ },
+      reverseButtons: () => {
+        /* handled by render fn */
+      },
       releaseFocus: () => {
         blockingElements.remove(this);
       },
@@ -249,29 +265,28 @@ export class DialogBase extends BaseElement {
     }
 
     const actionsClasses = {
-      'mdc-dialog__actions': !this.hideActions,
+      "mdc-dialog__actions": !this.hideActions,
     };
 
-    return html`
-    <div class="mdc-dialog ${classMap(classes)}"
-        role="alertdialog"
-        aria-modal="true"
-        aria-labelledby="title"
-        aria-describedby="content">
+    return html` <div
+      class="mdc-dialog ${classMap(classes)}"
+      role="alertdialog"
+      aria-modal="true"
+      aria-labelledby="title"
+      aria-describedby="content"
+    >
       <div class="mdc-dialog__container">
         <div class="mdc-dialog__surface">
           ${heading}
           <div id="content" class="mdc-dialog__content">
             <slot id="contentSlot"></slot>
           </div>
-          <footer
-              id="actions"
-              class="${classMap(actionsClasses)}">
+          <footer id="actions" class="${classMap(actionsClasses)}">
             <span>
               <slot name="secondaryAction"></slot>
             </span>
             <span>
-             <slot name="primaryAction"></slot>
+              <slot name="primaryAction"></slot>
             </span>
           </footer>
         </div>
@@ -281,8 +296,7 @@ export class DialogBase extends BaseElement {
   }
 
   protected renderHeading() {
-    return html`
-      <h2 id="title" class="mdc-dialog__title">${this.heading}</h2>`;
+    return html` <h2 id="title" class="mdc-dialog__title">${this.heading}</h2>`;
   }
 
   firstUpdated() {
@@ -353,45 +367,58 @@ export class DialogBase extends BaseElement {
 
   protected setEventListeners() {
     this.boundHandleClick = this.mdcFoundation.handleClick.bind(
-                                this.mdcFoundation) as EventListener;
+      this.mdcFoundation
+    ) as EventListener;
     this.boundLayout = () => {
       if (this.open) {
         this.mdcFoundation.layout.bind(this.mdcFoundation);
       }
     };
     this.boundHandleKeydown = this.mdcFoundation.handleKeydown.bind(
-                                  this.mdcFoundation) as EventListener;
-    this.boundHandleDocumentKeydown =
-        this.mdcFoundation.handleDocumentKeydown.bind(this.mdcFoundation) as
-        EventListener;
+      this.mdcFoundation
+    ) as EventListener;
+    this.boundHandleDocumentKeydown = this.mdcFoundation.handleDocumentKeydown.bind(
+      this.mdcFoundation
+    ) as EventListener;
 
-    this.mdcRoot.addEventListener('click', this.boundHandleClick);
-    window.addEventListener('resize', this.boundLayout, applyPassive());
+    this.mdcRoot.addEventListener("click", this.boundHandleClick);
+    window.addEventListener("resize", this.boundLayout, applyPassive());
     window.addEventListener(
-        'orientationchange', this.boundLayout, applyPassive());
+      "orientationchange",
+      this.boundLayout,
+      applyPassive()
+    );
     this.mdcRoot.addEventListener(
-        'keydown', this.boundHandleKeydown, applyPassive());
+      "keydown",
+      this.boundHandleKeydown,
+      applyPassive()
+    );
     document.addEventListener(
-        'keydown', this.boundHandleDocumentKeydown, applyPassive());
+      "keydown",
+      this.boundHandleDocumentKeydown,
+      applyPassive()
+    );
   }
 
   protected removeEventListeners() {
     if (this.boundHandleClick) {
-      this.mdcRoot.removeEventListener('click', this.boundHandleClick);
+      this.mdcRoot.removeEventListener("click", this.boundHandleClick);
     }
 
     if (this.boundLayout) {
-      window.removeEventListener('resize', this.boundLayout);
-      window.removeEventListener('orientationchange', this.boundLayout);
+      window.removeEventListener("resize", this.boundLayout);
+      window.removeEventListener("orientationchange", this.boundLayout);
     }
 
     if (this.boundHandleKeydown) {
-      this.mdcRoot.removeEventListener('keydown', this.boundHandleKeydown);
+      this.mdcRoot.removeEventListener("keydown", this.boundHandleKeydown);
     }
 
     if (this.boundHandleDocumentKeydown) {
       this.mdcRoot.removeEventListener(
-          'keydown', this.boundHandleDocumentKeydown);
+        "keydown",
+        this.boundHandleDocumentKeydown
+      );
     }
   }
 

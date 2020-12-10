@@ -14,39 +14,46 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import '@material/mwc-icon/mwc-icon';
-import '@material/mwc-ripple/mwc-ripple';
+import "@material/mwc-icon/mwc-icon";
+import "@material/mwc-ripple/mwc-ripple";
 
-import {Ripple} from '@material/mwc-ripple/mwc-ripple';
-import {RippleHandlers} from '@material/mwc-ripple/ripple-handlers';
-import {eventOptions, html, internalProperty, LitElement, property, query, queryAsync, TemplateResult} from 'lit-element';
-import {classMap} from 'lit-html/directives/class-map';
+import { Ripple } from "@material/mwc-ripple/mwc-ripple";
+import { RippleHandlers } from "@material/mwc-ripple/ripple-handlers";
+import { html, LitElement, TemplateResult } from "lit-element";
+import {
+  eventOptions,
+  internalProperty,
+  property,
+  query,
+  queryAsync,
+} from "lit-element/lib/decorators";
+import { classMap } from "lit-html/directives/class-map";
 
 /** @soyCompatible */
 export class ButtonBase extends LitElement {
-  @property({type: Boolean, reflect: true}) raised = false;
+  @property({ type: Boolean, reflect: true }) raised = false;
 
-  @property({type: Boolean, reflect: true}) unelevated = false;
+  @property({ type: Boolean, reflect: true }) unelevated = false;
 
-  @property({type: Boolean, reflect: true}) outlined = false;
+  @property({ type: Boolean, reflect: true }) outlined = false;
 
-  @property({type: Boolean}) dense = false;
+  @property({ type: Boolean }) dense = false;
 
-  @property({type: Boolean, reflect: true}) disabled = false;
+  @property({ type: Boolean, reflect: true }) disabled = false;
 
-  @property({type: Boolean, attribute: 'trailingicon'}) trailingIcon = false;
+  @property({ type: Boolean, attribute: "trailingicon" }) trailingIcon = false;
 
-  @property({type: Boolean, reflect: true}) fullwidth = false;
+  @property({ type: Boolean, reflect: true }) fullwidth = false;
 
-  @property({type: String}) icon = '';
+  @property({ type: String }) icon = "";
 
-  @property({type: String}) label = '';
+  @property({ type: String }) label = "";
 
-  @property({type: Boolean}) expandContent = false;
+  @property({ type: Boolean }) expandContent = false;
 
-  @query('#button') buttonElement!: HTMLElement;
+  @query("#button") buttonElement!: HTMLElement;
 
-  @queryAsync('mwc-ripple') ripple!: Promise<Ripple|null>;
+  @queryAsync("mwc-ripple") ripple!: Promise<Ripple | null>;
 
   @internalProperty() protected shouldRenderRipple = false;
 
@@ -61,16 +68,19 @@ export class ButtonBase extends LitElement {
   }
 
   /** @soyTemplate */
-  protected renderRipple(): TemplateResult|string {
+  protected renderRipple(): TemplateResult | string {
     const filled = this.raised || this.unelevated;
-    return this.shouldRenderRipple ?
-        html`<mwc-ripple class="ripple" .primary="${!filled}" .disabled="${
-            this.disabled}"></mwc-ripple>` :
-        '';
+    return this.shouldRenderRipple
+      ? html`<mwc-ripple
+          class="ripple"
+          .primary="${!filled}"
+          .disabled="${this.disabled}"
+        ></mwc-ripple>`
+      : "";
   }
 
   protected createRenderRoot() {
-    return this.attachShadow({mode: 'open', delegatesFocus: true});
+    return this.attachShadow({ mode: "open", delegatesFocus: true });
   }
 
   focus() {
@@ -92,10 +102,10 @@ export class ButtonBase extends LitElement {
   /** @soyTemplate classMap */
   protected getRenderClasses() {
     return classMap({
-      'mdc-button--raised': this.raised,
-      'mdc-button--unelevated': this.unelevated,
-      'mdc-button--outlined': this.outlined,
-      'mdc-button--dense': this.dense,
+      "mdc-button--raised": this.raised,
+      "mdc-button--unelevated": this.unelevated,
+      "mdc-button--outlined": this.outlined,
+      "mdc-button--dense": this.dense,
     });
   }
 
@@ -105,58 +115,56 @@ export class ButtonBase extends LitElement {
    * @soyClasses buttonClasses: #button
    */
   protected render(): TemplateResult {
-    return html`
-      <button
-          id="button"
-          class="mdc-button ${this.getRenderClasses()}"
-          ?disabled="${this.disabled}"
-          aria-label="${this.label || this.icon}"
-          @focus="${this.handleRippleFocus}"
-          @blur="${this.handleRippleBlur}"
-          @mousedown="${this.handleRippleActivate}"
-          @mouseenter="${this.handleRippleMouseEnter}"
-          @mouseleave="${this.handleRippleMouseLeave}"
-          @touchstart="${this.handleRippleActivate}"
-          @touchend="${this.handleRippleDeactivate}"
-          @touchcancel="${this.handleRippleDeactivate}">
-        ${this.renderOverlay()}
-        ${this.renderRipple()}
-        <span class="leading-icon">
-          <slot name="icon">
-            ${this.icon && !this.trailingIcon ? this.renderIcon() : ''}
-          </slot>
-        </span>
-        <span class="mdc-button__label">${this.label}</span>
-        <span class="slot-container ${classMap({
-      flex: this.expandContent
-    })}">
-          <slot></slot>
-        </span>
-        <span class="trailing-icon">
-          <slot name="trailingIcon">
-            ${this.icon && this.trailingIcon ? this.renderIcon() : ''}
-          </slot>
-        </span>
-      </button>`;
+    return html` <button
+      id="button"
+      class="mdc-button ${this.getRenderClasses()}"
+      ?disabled="${this.disabled}"
+      aria-label="${this.label || this.icon}"
+      @focus="${this.handleRippleFocus}"
+      @blur="${this.handleRippleBlur}"
+      @mousedown="${this.handleRippleActivate}"
+      @mouseenter="${this.handleRippleMouseEnter}"
+      @mouseleave="${this.handleRippleMouseLeave}"
+      @touchstart="${this.handleRippleActivate}"
+      @touchend="${this.handleRippleDeactivate}"
+      @touchcancel="${this.handleRippleDeactivate}"
+    >
+      ${this.renderOverlay()} ${this.renderRipple()}
+      <span class="leading-icon">
+        <slot name="icon">
+          ${this.icon && !this.trailingIcon ? this.renderIcon() : ""}
+        </slot>
+      </span>
+      <span class="mdc-button__label">${this.label}</span>
+      <span
+        class="slot-container ${classMap({
+          flex: this.expandContent,
+        })}"
+      >
+        <slot></slot>
+      </span>
+      <span class="trailing-icon">
+        <slot name="trailingIcon">
+          ${this.icon && this.trailingIcon ? this.renderIcon() : ""}
+        </slot>
+      </span>
+    </button>`;
   }
 
   /** @soyTemplate */
   protected renderIcon(): TemplateResult {
-    return html`
-    <mwc-icon class="mdc-button__icon">
-      ${this.icon}
-    </mwc-icon>`;
+    return html` <mwc-icon class="mdc-button__icon"> ${this.icon} </mwc-icon>`;
   }
 
-  @eventOptions({passive: true})
+  @eventOptions({ passive: true })
   private handleRippleActivate(evt?: Event) {
     const onUp = () => {
-      window.removeEventListener('mouseup', onUp);
+      window.removeEventListener("mouseup", onUp);
 
       this.handleRippleDeactivate();
     };
 
-    window.addEventListener('mouseup', onUp);
+    window.addEventListener("mouseup", onUp);
     this.rippleHandlers.startPress(evt);
   }
 

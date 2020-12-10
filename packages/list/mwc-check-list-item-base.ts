@@ -15,49 +15,48 @@
  limitations under the License.
  */
 
-import '@material/mwc-checkbox';
+import "@material/mwc-checkbox";
 
-import {Checkbox} from '@material/mwc-checkbox';
-import {html, property, query} from 'lit-element';
-import {classMap} from 'lit-html/directives/class-map';
+import { Checkbox } from "@material/mwc-checkbox";
+import { html } from "lit-element";
+import { property, query } from "lit-element/lib/decorators";
+import { classMap } from "lit-html/directives/class-map";
 
-import {GraphicType, ListItemBase} from './mwc-list-item-base';
+import { GraphicType, ListItemBase } from "./mwc-list-item-base";
 
 export class CheckListItemBase extends ListItemBase {
-  @query('slot') protected slotElement!: HTMLSlotElement|null;
-  @query('mwc-checkbox') protected checkboxElement!: Checkbox;
+  @query("slot") protected slotElement!: HTMLSlotElement | null;
+  @query("mwc-checkbox") protected checkboxElement!: Checkbox;
 
-  @property({type: Boolean}) left = false;
-  @property({type: String, reflect: true}) graphic: GraphicType = 'control';
+  @property({ type: Boolean }) left = false;
+  @property({ type: String, reflect: true }) graphic: GraphicType = "control";
 
   render() {
     const checkboxClasses = {
-      'mdc-list-item__graphic': this.left,
-      'mdc-list-item__meta': !this.left,
+      "mdc-list-item__graphic": this.left,
+      "mdc-list-item__meta": !this.left,
     };
 
     const text = this.renderText();
-    const graphic = this.graphic && this.graphic !== 'control' && !this.left ?
-        this.renderGraphic() :
-        html``;
+    const graphic =
+      this.graphic && this.graphic !== "control" && !this.left
+        ? this.renderGraphic()
+        : html``;
     const meta = this.hasMeta && this.left ? this.renderMeta() : html``;
     const ripple = this.renderRipple();
 
-    return html`
-      ${ripple}
-      ${graphic}
-      ${this.left ? '' : text}
+    return html` ${ripple} ${graphic} ${this.left ? "" : text}
       <span class=${classMap(checkboxClasses)}>
         <mwc-checkbox
-            reducedTouchTarget
-            tabindex=${this.tabindex}
-            .checked=${this.selected}
-            ?disabled=${this.disabled}
-            @change=${this.onChange}>
+          reducedTouchTarget
+          tabindex=${this.tabindex}
+          .checked=${this.selected}
+          ?disabled=${this.disabled}
+          @change=${this.onChange}
+        >
         </mwc-checkbox>
       </span>
-      ${this.left ? text : ''}
-      ${meta}`;
+      ${this.left ? text : ""} ${meta}`;
   }
 
   protected async onChange(evt: Event) {

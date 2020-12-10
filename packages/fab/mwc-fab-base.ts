@@ -18,7 +18,8 @@ import '@material/mwc-ripple/mwc-ripple';
 
 import {Ripple} from '@material/mwc-ripple/mwc-ripple';
 import {RippleHandlers} from '@material/mwc-ripple/ripple-handlers';
-import {eventOptions, html, internalProperty, LitElement, property, queryAsync, TemplateResult} from 'lit-element';
+import {html, LitElement, TemplateResult} from 'lit-element';
+import {eventOptions, internalProperty, property, queryAsync} from 'lit-element/lib/decorators';
 import {classMap} from 'lit-html/directives/class-map';
 
 /**

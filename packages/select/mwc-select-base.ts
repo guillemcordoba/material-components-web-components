@@ -33,7 +33,8 @@ import {Menu} from '@material/mwc-menu';
 import {NotchedOutline} from '@material/mwc-notched-outline';
 import {MDCSelectAdapter} from '@material/select/adapter';
 import MDCSelectFoundation from '@material/select/foundation';
-import {eventOptions, html, property, query} from 'lit-element';
+import {html} from 'lit-element';
+import {eventOptions, property, query} from 'lit-element/lib/decorators';
 import {nothing} from 'lit-html';
 import {classMap} from 'lit-html/directives/class-map';
 import {ifDefined} from 'lit-html/directives/if-defined';
@@ -652,9 +653,9 @@ export abstract class SelectBase extends FormElement {
     this.formElement.setCustomValidity(message);
   }
 
-  protected async _getUpdateComplete() {
+  protected async getUpdateComplete() {
     await this._menuUpdateComplete;
-    await super._getUpdateComplete();
+    await super.getUpdateComplete();
   }
 
   protected async firstUpdated() {

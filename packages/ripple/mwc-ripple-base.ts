@@ -14,29 +14,30 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import {BaseElement} from '@material/mwc-base/base-element';
-import {MDCRippleAdapter} from '@material/ripple/adapter';
-import MDCRippleFoundation from '@material/ripple/foundation';
-import {html, internalProperty, property, query, TemplateResult} from 'lit-element';
-import {classMap} from 'lit-html/directives/class-map';
-import {styleMap} from 'lit-html/directives/style-map';
-import {RippleAPI} from './ripple-handlers';
+import { BaseElement } from "@material/mwc-base/base-element";
+import { MDCRippleAdapter } from "@material/ripple/adapter";
+import MDCRippleFoundation from "@material/ripple/foundation";
+import { html, TemplateResult } from "lit-element";
+import { internalProperty, property, query } from "lit-element/lib/decorators";
+import { classMap } from "lit-html/directives/class-map";
+import { styleMap } from "lit-html/directives/style-map";
+import { RippleAPI } from "./ripple-handlers";
 
 /** @soyCompatible */
 export class RippleBase extends BaseElement implements RippleAPI {
-  @query('.mdc-ripple-surface') mdcRoot!: HTMLElement;
+  @query(".mdc-ripple-surface") mdcRoot!: HTMLElement;
 
-  @property({type: Boolean}) primary = false;
+  @property({ type: Boolean }) primary = false;
 
-  @property({type: Boolean}) accent = false;
+  @property({ type: Boolean }) accent = false;
 
-  @property({type: Boolean}) unbounded = false;
+  @property({ type: Boolean }) unbounded = false;
 
-  @property({type: Boolean}) disabled = false;
+  @property({ type: Boolean }) disabled = false;
 
-  @property({type: Boolean}) activated = false;
+  @property({ type: Boolean }) activated = false;
 
-  @property({type: Boolean}) selected = false;
+  @property({ type: Boolean }) selected = false;
 
   @internalProperty() private hovering = false;
 
@@ -46,24 +47,24 @@ export class RippleBase extends BaseElement implements RippleAPI {
 
   @internalProperty() private fgDeactivation = false;
 
-  @internalProperty() private fgScale = '';
+  @internalProperty() private fgScale = "";
 
-  @internalProperty() private fgSize = '';
+  @internalProperty() private fgSize = "";
 
-  @internalProperty() private translateStart = '';
+  @internalProperty() private translateStart = "";
 
-  @internalProperty() private translateEnd = '';
+  @internalProperty() private translateEnd = "";
 
-  @internalProperty() private leftPos = '';
+  @internalProperty() private leftPos = "";
 
-  @internalProperty() private topPos = '';
+  @internalProperty() private topPos = "";
 
   protected mdcFoundationClass = MDCRippleFoundation;
 
   protected mdcFoundation!: MDCRippleFoundation;
 
   get isActive() {
-    return (this.parentElement || this).matches(':active');
+    return (this.parentElement || this).matches(":active");
   }
 
   createAdapter(): MDCRippleAdapter {
@@ -74,13 +75,13 @@ export class RippleBase extends BaseElement implements RippleAPI {
       isSurfaceDisabled: () => this.disabled,
       addClass: (className: string) => {
         switch (className) {
-          case 'mdc-ripple-upgraded--background-focused':
+          case "mdc-ripple-upgraded--background-focused":
             this.bgFocused = true;
             break;
-          case 'mdc-ripple-upgraded--foreground-activation':
+          case "mdc-ripple-upgraded--foreground-activation":
             this.fgActivation = true;
             break;
-          case 'mdc-ripple-upgraded--foreground-deactivation':
+          case "mdc-ripple-upgraded--foreground-deactivation":
             this.fgDeactivation = true;
             break;
           default:
@@ -89,13 +90,13 @@ export class RippleBase extends BaseElement implements RippleAPI {
       },
       removeClass: (className: string) => {
         switch (className) {
-          case 'mdc-ripple-upgraded--background-focused':
+          case "mdc-ripple-upgraded--background-focused":
             this.bgFocused = false;
             break;
-          case 'mdc-ripple-upgraded--foreground-activation':
+          case "mdc-ripple-upgraded--foreground-activation":
             this.fgActivation = false;
             break;
-          case 'mdc-ripple-upgraded--foreground-deactivation':
+          case "mdc-ripple-upgraded--foreground-deactivation":
             this.fgDeactivation = false;
             break;
           default:
@@ -111,22 +112,22 @@ export class RippleBase extends BaseElement implements RippleAPI {
       deregisterResizeHandler: () => undefined,
       updateCssVariable: (varName: string, value: string) => {
         switch (varName) {
-          case '--mdc-ripple-fg-scale':
+          case "--mdc-ripple-fg-scale":
             this.fgScale = value;
             break;
-          case '--mdc-ripple-fg-size':
+          case "--mdc-ripple-fg-size":
             this.fgSize = value;
             break;
-          case '--mdc-ripple-fg-translate-end':
+          case "--mdc-ripple-fg-translate-end":
             this.translateEnd = value;
             break;
-          case '--mdc-ripple-fg-translate-start':
+          case "--mdc-ripple-fg-translate-start":
             this.translateStart = value;
             break;
-          case '--mdc-ripple-left':
+          case "--mdc-ripple-left":
             this.leftPos = value;
             break;
-          case '--mdc-ripple-top':
+          case "--mdc-ripple-top":
             this.topPos = value;
             break;
           default:
@@ -134,9 +135,11 @@ export class RippleBase extends BaseElement implements RippleAPI {
         }
       },
       computeBoundingRect: () =>
-          (this.parentElement || this).getBoundingClientRect(),
-      getWindowPageOffset: () =>
-          ({x: window.pageXOffset, y: window.pageYOffset}),
+        (this.parentElement || this).getBoundingClientRect(),
+      getWindowPageOffset: () => ({
+        x: window.pageXOffset,
+        y: window.pageYOffset,
+      }),
     };
   }
 
@@ -186,35 +189,36 @@ export class RippleBase extends BaseElement implements RippleAPI {
   /** @soyTemplate */
   protected render(): TemplateResult {
     const shouldActivateInPrimary =
-        this.activated && (this.primary || !this.accent);
+      this.activated && (this.primary || !this.accent);
     const shouldSelectInPrimary =
-        this.selected && (this.primary || !this.accent);
+      this.selected && (this.primary || !this.accent);
 
     /** @classMap */
     const classes = {
-      'mdc-ripple-surface--accent': this.accent,
-      'mdc-ripple-surface--primary--activated': shouldActivateInPrimary,
-      'mdc-ripple-surface--accent--activated': this.accent && this.activated,
-      'mdc-ripple-surface--primary--selected': shouldSelectInPrimary,
-      'mdc-ripple-surface--accent--selected': this.accent && this.selected,
-      'mdc-ripple-surface--disabled': this.disabled,
-      'mdc-ripple-surface--hover': this.hovering,
-      'mdc-ripple-surface--primary': this.primary,
-      'mdc-ripple-surface--selected': this.selected,
-      'mdc-ripple-upgraded--background-focused': this.bgFocused,
-      'mdc-ripple-upgraded--foreground-activation': this.fgActivation,
-      'mdc-ripple-upgraded--foreground-deactivation': this.fgDeactivation,
-      'mdc-ripple-upgraded--unbounded': this.unbounded,
+      "mdc-ripple-surface--accent": this.accent,
+      "mdc-ripple-surface--primary--activated": shouldActivateInPrimary,
+      "mdc-ripple-surface--accent--activated": this.accent && this.activated,
+      "mdc-ripple-surface--primary--selected": shouldSelectInPrimary,
+      "mdc-ripple-surface--accent--selected": this.accent && this.selected,
+      "mdc-ripple-surface--disabled": this.disabled,
+      "mdc-ripple-surface--hover": this.hovering,
+      "mdc-ripple-surface--primary": this.primary,
+      "mdc-ripple-surface--selected": this.selected,
+      "mdc-ripple-upgraded--background-focused": this.bgFocused,
+      "mdc-ripple-upgraded--foreground-activation": this.fgActivation,
+      "mdc-ripple-upgraded--foreground-deactivation": this.fgDeactivation,
+      "mdc-ripple-upgraded--unbounded": this.unbounded,
     };
-    return html`
-        <div class="mdc-ripple-surface mdc-ripple-upgraded ${classMap(classes)}"
-          style="${styleMap({
-      '--mdc-ripple-fg-scale': this.fgScale,
-      '--mdc-ripple-fg-size': this.fgSize,
-      '--mdc-ripple-fg-translate-end': this.translateEnd,
-      '--mdc-ripple-fg-translate-start': this.translateStart,
-      '--mdc-ripple-left': this.leftPos,
-      '--mdc-ripple-top': this.topPos,
-    })}"></div>`;
+    return html` <div
+      class="mdc-ripple-surface mdc-ripple-upgraded ${classMap(classes)}"
+      style="${styleMap({
+        "--mdc-ripple-fg-scale": this.fgScale,
+        "--mdc-ripple-fg-size": this.fgSize,
+        "--mdc-ripple-fg-translate-end": this.translateEnd,
+        "--mdc-ripple-fg-translate-start": this.translateStart,
+        "--mdc-ripple-left": this.leftPos,
+        "--mdc-ripple-top": this.topPos,
+      })}"
+    ></div>`;
   }
 }

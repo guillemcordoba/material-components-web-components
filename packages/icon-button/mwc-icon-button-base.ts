@@ -14,23 +14,30 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import '@material/mwc-ripple/mwc-ripple';
+import "@material/mwc-ripple/mwc-ripple";
 
-import {Ripple} from '@material/mwc-ripple/mwc-ripple';
-import {RippleHandlers} from '@material/mwc-ripple/ripple-handlers';
-import {eventOptions, html, internalProperty, LitElement, property, query, queryAsync, TemplateResult} from 'lit-element';
+import { Ripple } from "@material/mwc-ripple/mwc-ripple";
+import { RippleHandlers } from "@material/mwc-ripple/ripple-handlers";
+import { html, LitElement, TemplateResult } from "lit-element";
+import {
+  eventOptions,
+  internalProperty,
+  property,
+  query,
+  queryAsync,
+} from "lit-element/lib/decorators";
 
 /** @soyCompatible */
 export class IconButtonBase extends LitElement {
-  @property({type: Boolean, reflect: true}) disabled = false;
+  @property({ type: Boolean, reflect: true }) disabled = false;
 
-  @property({type: String}) icon = '';
+  @property({ type: String }) icon = "";
 
-  @property({type: String}) label = '';
+  @property({ type: String }) label = "";
 
-  @query('button') buttonElement!: HTMLElement;
+  @query("button") buttonElement!: HTMLElement;
 
-  @queryAsync('mwc-ripple') ripple!: Promise<Ripple|null>;
+  @queryAsync("mwc-ripple") ripple!: Promise<Ripple | null>;
 
   @internalProperty() protected shouldRenderRipple = false;
 
@@ -40,13 +47,10 @@ export class IconButtonBase extends LitElement {
   });
 
   /** @soyTemplate */
-  protected renderRipple(): TemplateResult|string {
-    return this.shouldRenderRipple ? html`
-            <mwc-ripple
-                .disabled="${this.disabled}"
-                unbounded>
-            </mwc-ripple>` :
-                                     '';
+  protected renderRipple(): TemplateResult | string {
+    return this.shouldRenderRipple
+      ? html` <mwc-ripple .disabled="${this.disabled}" unbounded> </mwc-ripple>`
+      : "";
   }
 
   focus() {
@@ -68,38 +72,39 @@ export class IconButtonBase extends LitElement {
   /** @soyTemplate */
   protected render(): TemplateResult {
     return html`<button
-        class="mdc-icon-button"
-        aria-label="${this.label || this.icon}"
-        ?disabled="${this.disabled}"
-        @focus="${this.handleRippleFocus}"
-        @blur="${this.handleRippleBlur}"
-        @mousedown="${this.handleRippleMouseDown}"
-        @mouseenter="${this.handleRippleMouseEnter}"
-        @mouseleave="${this.handleRippleMouseLeave}"
-        @touchstart="${this.handleRippleTouchStart}"
-        @touchend="${this.handleRippleDeactivate}"
-        @touchcancel="${this.handleRippleDeactivate}">
+      class="mdc-icon-button"
+      aria-label="${this.label || this.icon}"
+      ?disabled="${this.disabled}"
+      @focus="${this.handleRippleFocus}"
+      @blur="${this.handleRippleBlur}"
+      @mousedown="${this.handleRippleMouseDown}"
+      @mouseenter="${this.handleRippleMouseEnter}"
+      @mouseleave="${this.handleRippleMouseLeave}"
+      @touchstart="${this.handleRippleTouchStart}"
+      @touchend="${this.handleRippleDeactivate}"
+      @touchcancel="${this.handleRippleDeactivate}"
+    >
       ${this.renderRipple()}
-    <i class="material-icons">${this.icon}</i>
-    <span class="default-slot-container">
+      <i class="material-icons">${this.icon}</i>
+      <span class="default-slot-container">
         <slot></slot>
-    </span>
-  </button>`;
+      </span>
+    </button>`;
   }
 
-  @eventOptions({passive: true})
+  @eventOptions({ passive: true })
   protected handleRippleMouseDown(event?: Event) {
     const onUp = () => {
-      window.removeEventListener('mouseup', onUp);
+      window.removeEventListener("mouseup", onUp);
 
       this.handleRippleDeactivate();
     };
 
-    window.addEventListener('mouseup', onUp);
+    window.addEventListener("mouseup", onUp);
     this.rippleHandlers.startPress(event);
   }
 
-  @eventOptions({passive: true})
+  @eventOptions({ passive: true })
   protected handleRippleTouchStart(event?: Event) {
     this.rippleHandlers.startPress(event);
   }

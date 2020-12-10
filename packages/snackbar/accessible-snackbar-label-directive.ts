@@ -69,7 +69,7 @@ export const accessibleSnackbarLabel =
         labelEl.textContent = labelText;
         // endNode can't be a Document, so it must have a parent.
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        part.endNode.parentNode!.insertBefore(labelEl, part.endNode);
+        part._endNode.parentNode!.insertBefore(labelEl, part._endNode);
         maybeState = {
           labelEl,
           timerId: null,

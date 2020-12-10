@@ -15,7 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 import MDCTopAppBarFoundation from '@material/top-app-bar/standard/foundation';
-import {property} from 'lit-element';
+import {property} from 'lit-element/lib/decorators';
 
 import {passiveEventOptionsIfSupported, TopAppBarBaseBase} from './mwc-top-app-bar-base-base';
 

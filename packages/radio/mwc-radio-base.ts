@@ -14,31 +14,40 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import {addHasRemoveClass, FormElement} from '@material/mwc-base/form-element';
-import {observer} from '@material/mwc-base/observer';
-import {SingleSelectionController} from '@material/mwc-radio/single-selection-controller';
-import {Ripple} from '@material/mwc-ripple/mwc-ripple';
-import {RippleHandlers} from '@material/mwc-ripple/ripple-handlers';
-import {MDCRadioAdapter} from '@material/radio/adapter';
-import MDCRadioFoundation from '@material/radio/foundation';
-import {eventOptions, html, internalProperty, property, query, queryAsync, TemplateResult} from 'lit-element';
-import {classMap} from 'lit-html/directives/class-map';
-
+import {
+  addHasRemoveClass,
+  FormElement,
+} from "@material/mwc-base/form-element";
+import { observer } from "@material/mwc-base/observer";
+import { SingleSelectionController } from "@material/mwc-radio/single-selection-controller";
+import { Ripple } from "@material/mwc-ripple/mwc-ripple";
+import { RippleHandlers } from "@material/mwc-ripple/ripple-handlers";
+import { MDCRadioAdapter } from "@material/radio/adapter";
+import MDCRadioFoundation from "@material/radio/foundation";
+import { html, TemplateResult } from "lit-element";
+import {
+  eventOptions,
+  internalProperty,
+  property,
+  query,
+  queryAsync,
+} from "lit-element/lib/decorators";
+import { classMap } from "lit-html/directives/class-map";
 
 /**
  * @fires checked
  * @soyCompatible
  */
 export class RadioBase extends FormElement {
-  @query('.mdc-radio') protected mdcRoot!: HTMLElement;
+  @query(".mdc-radio") protected mdcRoot!: HTMLElement;
 
-  @query('input') protected formElement!: HTMLInputElement;
+  @query("input") protected formElement!: HTMLInputElement;
 
   private _checked = false;
 
-  @property({type: Boolean}) global = false;
+  @property({ type: Boolean }) global = false;
 
-  @property({type: Boolean, reflect: true})
+  @property({ type: Boolean, reflect: true })
   get checked() {
     return this._checked;
   }
@@ -78,24 +87,24 @@ export class RadioBase extends FormElement {
       // Blur on input since this determines the focus style.
       this.formElement?.blur();
     }
-    this.requestUpdate('checked', oldValue);
+    this.requestUpdate("checked", oldValue);
 
     // useful when unchecks self and wrapping element needs to synchronize
     // TODO(b/168543810): Remove triggering event on programmatic API call.
-    this.dispatchEvent(new Event('checked', {bubbles: true, composed: true}));
+    this.dispatchEvent(new Event("checked", { bubbles: true, composed: true }));
   }
 
-  @property({type: Boolean})
-  @observer(function(this: RadioBase, disabled: boolean) {
+  @property({ type: Boolean })
+  @observer(function (this: RadioBase, disabled: boolean) {
     this.mdcFoundation.setDisabled(disabled);
   })
   disabled = false;
 
-  @property({type: String})
-  @observer(function(this: RadioBase, value: string) {
+  @property({ type: String })
+  @observer(function (this: RadioBase, value: string) {
     this._handleUpdatedValue(value);
   })
-  value = '';
+  value = "";
 
   _handleUpdatedValue(newValue: string) {
     // the observer function can't access protected fields (according to
@@ -104,14 +113,14 @@ export class RadioBase extends FormElement {
     this.formElement.value = newValue;
   }
 
-  @property({type: String}) name = '';
+  @property({ type: String }) name = "";
 
   /**
    * Touch target extends beyond visual boundary of a component by default.
    * Set to `true` to remove touch target added to the component.
    * @see https://material.io/design/usability/accessibility.html
    */
-  @property({type: Boolean}) reducedTouchTarget = false;
+  @property({ type: Boolean }) reducedTouchTarget = false;
 
   protected mdcFoundationClass = MDCRadioFoundation;
 
@@ -123,13 +132,13 @@ export class RadioBase extends FormElement {
    * input's tabindex is updated based on checked status.
    * Tab navigation will be removed from unchecked radios.
    */
-  @property({type: Number}) formElementTabIndex = 0;
+  @property({ type: Number }) formElementTabIndex = 0;
 
   @internalProperty() protected shouldRenderRipple = false;
 
-  @queryAsync('mwc-ripple') ripple!: Promise<Ripple|null>;
+  @queryAsync("mwc-ripple") ripple!: Promise<Ripple | null>;
 
-  private rippleElement: Ripple|null = null;
+  private rippleElement: Ripple | null = null;
 
   protected rippleHandlers: RippleHandlers = new RippleHandlers(() => {
     this.shouldRenderRipple = true;
@@ -141,11 +150,14 @@ export class RadioBase extends FormElement {
   });
 
   /** @soyTemplate */
-  protected renderRipple(): TemplateResult|string {
-    return this.shouldRenderRipple ?
-        html`<mwc-ripple unbounded accent .disabled="${
-            this.disabled}"></mwc-ripple>` :
-        '';
+  protected renderRipple(): TemplateResult | string {
+    return this.shouldRenderRipple
+      ? html`<mwc-ripple
+          unbounded
+          accent
+          .disabled="${this.disabled}"
+        ></mwc-ripple>`
+      : "";
   }
 
   get isRippleActive() {
@@ -219,50 +231,50 @@ export class RadioBase extends FormElement {
   protected render(): TemplateResult {
     /** @classMap */
     const classes = {
-      'mdc-radio--touch': !this.reducedTouchTarget,
-      'mdc-radio--disabled': this.disabled,
+      "mdc-radio--touch": !this.reducedTouchTarget,
+      "mdc-radio--disabled": this.disabled,
     };
 
-    return html`
-      <div class="mdc-radio ${classMap(classes)}">
-        <input
-          tabindex="${this.formElementTabIndex}"
-          class="mdc-radio__native-control"
-          type="radio"
-          name="${this.name}"
-          .checked="${this.checked}"
-          .value="${this.value}"
-          ?disabled="${this.disabled}"
-          @change="${this.changeHandler}"
-          @focus="${this.handleFocus}"
-          @click="${this.handleClick}"
-          @blur="${this.handleBlur}"
-          @mousedown="${this.handleRippleMouseDown}"
-          @mouseenter="${this.handleRippleMouseEnter}"
-          @mouseleave="${this.handleRippleMouseLeave}"
-          @touchstart="${this.handleRippleTouchStart}"
-          @touchend="${this.handleRippleDeactivate}"
-          @touchcancel="${this.handleRippleDeactivate}">
-        <div class="mdc-radio__background">
-          <div class="mdc-radio__outer-circle"></div>
-          <div class="mdc-radio__inner-circle"></div>
-        </div>
-        ${this.renderRipple()}
-      </div>`;
+    return html` <div class="mdc-radio ${classMap(classes)}">
+      <input
+        tabindex="${this.formElementTabIndex}"
+        class="mdc-radio__native-control"
+        type="radio"
+        name="${this.name}"
+        .checked="${this.checked}"
+        .value="${this.value}"
+        ?disabled="${this.disabled}"
+        @change="${this.changeHandler}"
+        @focus="${this.handleFocus}"
+        @click="${this.handleClick}"
+        @blur="${this.handleBlur}"
+        @mousedown="${this.handleRippleMouseDown}"
+        @mouseenter="${this.handleRippleMouseEnter}"
+        @mouseleave="${this.handleRippleMouseLeave}"
+        @touchstart="${this.handleRippleTouchStart}"
+        @touchend="${this.handleRippleDeactivate}"
+        @touchcancel="${this.handleRippleDeactivate}"
+      />
+      <div class="mdc-radio__background">
+        <div class="mdc-radio__outer-circle"></div>
+        <div class="mdc-radio__inner-circle"></div>
+      </div>
+      ${this.renderRipple()}
+    </div>`;
   }
 
   protected handleRippleMouseDown(event: Event) {
     const onUp = () => {
-      window.removeEventListener('mouseup', onUp);
+      window.removeEventListener("mouseup", onUp);
 
       this.handleRippleDeactivate();
     };
 
-    window.addEventListener('mouseup', onUp);
+    window.addEventListener("mouseup", onUp);
     this.rippleHandlers.startPress(event);
   }
 
-  @eventOptions({passive: true})
+  @eventOptions({ passive: true })
   protected handleRippleTouchStart(event: Event) {
     this.rippleHandlers.startPress(event);
   }

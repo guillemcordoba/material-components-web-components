@@ -16,7 +16,7 @@
  */
 
 import {FormElement} from '@material/mwc-base/form-element';
-import {customElement, query} from 'lit-element';
+import {customElement, query} from 'lit-element/lib/decorators';
 import {html} from 'lit-html';
 
 import {fixture, TestFixture} from '../../../test/src/util/helpers';

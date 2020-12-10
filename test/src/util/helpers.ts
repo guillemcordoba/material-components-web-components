@@ -14,7 +14,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import {customElement, html, LitElement, property} from 'lit-element';
+import {html, LitElement} from 'lit-element';
+import {customElement, property} from 'lit-element/lib/decorators';
 import {render, TemplateResult} from 'lit-html';
 
 interface HasKeyCode {

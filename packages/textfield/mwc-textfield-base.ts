@@ -25,7 +25,8 @@ import {lineRipple, LineRipple} from '@material/mwc-line-ripple';
 import {NotchedOutline} from '@material/mwc-notched-outline';
 import {MDCTextFieldAdapter, MDCTextFieldInputAdapter, MDCTextFieldLabelAdapter, MDCTextFieldLineRippleAdapter, MDCTextFieldOutlineAdapter, MDCTextFieldRootAdapter} from '@material/textfield/adapter';
 import MDCTextFieldFoundation from '@material/textfield/foundation';
-import {eventOptions, html, internalProperty, property, PropertyValues, query, TemplateResult} from 'lit-element';
+import {html, PropertyValues, TemplateResult} from 'lit-element';
+import {eventOptions, internalProperty, property, query} from 'lit-element/lib/decorators';
 import {classMap} from 'lit-html/directives/class-map';
 import {ifDefined} from 'lit-html/directives/if-defined';
 import {live} from 'lit-html/directives/live';
@@ -632,8 +633,8 @@ export abstract class TextFieldBase extends FormElement {
     };
   }
 
-  async _getUpdateComplete() {
-    await super._getUpdateComplete();
+  async getUpdateComplete() {
+    await super.getUpdateComplete();
     await this._outlineUpdateComplete;
   }
 

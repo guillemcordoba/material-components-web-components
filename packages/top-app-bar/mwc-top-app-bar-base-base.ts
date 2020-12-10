@@ -19,7 +19,8 @@ import {supportsPassiveEventListener} from '@material/mwc-base/utils';
 import {MDCTopAppBarAdapter} from '@material/top-app-bar/adapter';
 import {strings} from '@material/top-app-bar/constants';
 import MDCTopAppBarBaseFoundation from '@material/top-app-bar/foundation';
-import {html, property, query} from 'lit-element';
+import {html} from 'lit-element';
+import {property, query} from 'lit-element/lib/decorators';
 import {classMap} from 'lit-html/directives/class-map';
 
 export const passiveEventOptionsIfSupported =

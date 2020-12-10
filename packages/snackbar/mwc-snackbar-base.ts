@@ -19,7 +19,8 @@ import {observer} from '@material/mwc-base/observer';
 import {MDCSnackbarAdapter} from '@material/snackbar/adapter';
 import MDCSnackbarFoundation from '@material/snackbar/foundation';
 import {MDCSnackbarCloseEventDetail} from '@material/snackbar/types';
-import {html, property, query} from 'lit-element';
+import {html} from 'lit-element';
+import {property, query} from 'lit-element/lib/decorators';
 import {classMap} from 'lit-html/directives/class-map';
 
 import {accessibleSnackbarLabel} from './accessible-snackbar-label-directive';

@@ -22,7 +22,8 @@ import {addHasRemoveClass, BaseElement} from '@material/mwc-base/base-element';
 import {observer} from '@material/mwc-base/observer';
 import {Ripple} from '@material/mwc-ripple/mwc-ripple';
 import {RippleHandlers} from '@material/mwc-ripple/ripple-handlers';
-import {eventOptions, html, internalProperty, property, query, queryAsync} from 'lit-element';
+import {html} from 'lit-element';
+import {eventOptions, internalProperty, property, query, queryAsync} from 'lit-element/lib/decorators';
 
 export class IconButtonToggleBase extends BaseElement {
   protected mdcFoundationClass = MDCIconButtonToggleFoundation;

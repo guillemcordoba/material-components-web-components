@@ -16,7 +16,7 @@ limitations under the License.
 */
 
 import {style} from '@material/mwc-icon-button/mwc-icon-button-css';
-import {customElement} from 'lit-element';
+import {customElement} from 'lit-element/lib/decorators';
 
 import {IconButtonToggleBase} from './mwc-icon-button-toggle-base';
 

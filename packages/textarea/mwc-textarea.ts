@@ -16,7 +16,7 @@ limitations under the License.
 */
 
 import {style as textfieldStyles} from '@material/mwc-textfield/mwc-textfield-css';
-import {customElement} from 'lit-element';
+import {customElement} from 'lit-element/lib/decorators';
 import {TextAreaBase, TextAreaCharCounter, TextFieldInputMode, TextFieldType} from './mwc-textarea-base';
 import {style as textareaStyles} from './mwc-textarea-css';
 

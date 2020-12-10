@@ -19,7 +19,8 @@ import '@material/mwc-list/mwc-list-item';
 import {BaseElement} from '@material/mwc-base/base-element';
 import {observer} from '@material/mwc-base/observer';
 import {deepActiveElementPath, doesElementContainFocus, findAssignedElement, isNodeElement} from '@material/mwc-base/utils';
-import {html, property, query} from 'lit-element';
+import {html} from 'lit-element';
+import {property, query} from 'lit-element/lib/decorators';
 import {ifDefined} from 'lit-html/directives/if-defined';
 
 import {MDCListAdapter} from './mwc-list-adapter';
@@ -48,7 +49,7 @@ const isListItem = (element: Element): element is ListItemBase => {
 function clearAndCreateItemsReadyPromise(this: ListBase) {
   const oldResolver = this.itemsReadyResolver;
   this.itemsReady = new Promise((res) => {
-    return this.itemsReadyResolver = res;
+    return this.itemsReadyResolver = res as (value: never[] | PromiseLike<never[]>) => void;
   });
   oldResolver();
 }
@@ -150,8 +151,8 @@ export abstract class ListBase extends BaseElement implements Layoutable {
 
   itemsReady = Promise.resolve([]);
 
-  async _getUpdateComplete() {
-    await super._getUpdateComplete();
+  async getUpdateComplete() {
+    await super.getUpdateComplete();
     await this.itemsReady;
   }
 

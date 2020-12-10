@@ -19,8 +19,8 @@
     "@material/linear-progress": "=9.0.0-canary.1c156d69d.0",
     "@material/theme": "=9.0.0-canary.1c156d69d.0",
     "@types/resize-observer-browser": "^0.1.3",
-    "lit-element": "^2.3.0",
-    "lit-html": "^1.1.2",
+    "lit-element": "^3.0.0-pre.1",
+    "lit-html": "^2.0.0-pre.3",
     "tslib": "^2.0.1"
   },
   "publishConfig": {

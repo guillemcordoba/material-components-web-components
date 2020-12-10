@@ -25,7 +25,8 @@ import {observer} from '@material/mwc-base/observer';
 import {List, MWCListIndex} from '@material/mwc-list';
 import {ActionDetail} from '@material/mwc-list/mwc-list-foundation';
 import {ListItemBase} from '@material/mwc-list/mwc-list-item-base';
-import {html, property, query} from 'lit-element';
+import {html} from 'lit-element';
+import {property, query} from 'lit-element/lib/decorators';
 
 import {MenuSurface} from './mwc-menu-surface';
 import {Corner, MenuCorner} from './mwc-menu-surface-base';
@@ -349,9 +350,9 @@ export abstract class MenuBase extends BaseElement {
     this.open = false;
   }
 
-  protected async _getUpdateComplete() {
+  protected async getUpdateComplete() {
     await this._listUpdateComplete;
-    await super._getUpdateComplete();
+    await super.getUpdateComplete();
   }
 
   protected async firstUpdated() {

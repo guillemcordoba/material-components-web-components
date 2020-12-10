@@ -15,7 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 import {style} from '@material/mwc-top-app-bar/mwc-top-app-bar-css';
-import {customElement} from 'lit-element';
+import {customElement} from 'lit-element/lib/decorators';
 
 import {TopAppBarFixedBase} from './mwc-top-app-bar-fixed-base';
 

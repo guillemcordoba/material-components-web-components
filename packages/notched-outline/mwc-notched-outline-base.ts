@@ -17,7 +17,8 @@ limitations under the License.
 import {BaseElement} from '@material/mwc-base/base-element';
 import {MDCNotchedOutlineAdapter} from '@material/notched-outline/adapter';
 import {MDCNotchedOutlineFoundation} from '@material/notched-outline/foundation';
-import {html, property, query} from 'lit-element';
+import {html} from 'lit-element';
+import {property, query} from 'lit-element/lib/decorators';
 import {classMap} from 'lit-html/directives/class-map';
 
 export class NotchedOutlineBase extends BaseElement {

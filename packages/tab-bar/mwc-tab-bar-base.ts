@@ -25,7 +25,8 @@ import {TabScroller} from '@material/mwc-tab-scroller';
 import {MDCTabBarAdapter} from '@material/tab-bar/adapter';
 import MDCTabBarFoundation from '@material/tab-bar/foundation';
 import {MDCTabInteractionEvent} from '@material/tab/types';
-import {html, property, query} from 'lit-element';
+import {html} from 'lit-element';
+import {property, query} from 'lit-element/lib/decorators';
 
 export class TabBarBase extends BaseElement {
   protected mdcFoundation!: MDCTabBarFoundation;
@@ -168,8 +169,8 @@ export class TabBarBase extends BaseElement {
     // This is necessary because the foundation/adapter synchronously addresses
     // the scroller element.
   }
-  protected _getUpdateComplete() {
-    return super._getUpdateComplete()
+  protected getUpdateComplete() {
+    return super.getUpdateComplete()
         .then(() => this.scrollerElement.updateComplete)
         .then(() => {
           if (this.mdcFoundation === undefined) {

@@ -15,30 +15,35 @@
  * limitations under the License.
  */
 
-import '@material/mwc-button';
-import '@material/mwc-dialog';
+import "@material/mwc-button";
+import "@material/mwc-dialog";
 
-import {Button} from '@material/mwc-button';
-import {Dialog} from '@material/mwc-dialog';
-import {DocumentWithBlockingElements} from 'blocking-elements';
-import {customElement, LitElement} from 'lit-element';
-import {html} from 'lit-html';
+import { Button } from "@material/mwc-button";
+import { Dialog } from "@material/mwc-dialog";
+import { DocumentWithBlockingElements } from "blocking-elements";
+import { LitElement } from "lit-element";
+import { customElement } from "lit-element/lib/decorators";
+import { html } from "lit-html";
 
-import {fixture, rafPromise, TestFixture} from '../../../test/src/util/helpers';
+import {
+  fixture,
+  rafPromise,
+  TestFixture,
+} from "../../../test/src/util/helpers";
 
-const blockingElements =
-    (document as DocumentWithBlockingElements).$blockingElements;
+const blockingElements = (document as DocumentWithBlockingElements)
+  .$blockingElements;
 
-const OPENING_EVENT = 'opening';
-const OPENED_EVENT = 'opened';
-const CLOSING_EVENT = 'closing';
-const CLOSED_EVENT = 'closed';
+const OPENING_EVENT = "opening";
+const OPENED_EVENT = "opened";
+const CLOSING_EVENT = "closing";
+const CLOSED_EVENT = "closed";
 
 interface HasKeyCode {
   keyCode: number;
 }
 
-@customElement('my-test-element')
+@customElement("my-test-element")
 export class MyTestElement extends LitElement {
   render() {
     return html`
@@ -51,18 +56,19 @@ export class MyTestElement extends LitElement {
   }
 }
 
-
-const awaitEvent =
-    (element: Dialog, eventName: string): Promise<CustomEvent> => {
-      return new Promise((res) => {
-        const listener = (e: CustomEvent) => {
-          element.removeEventListener(eventName, listener as EventListener);
-          res(e);
-        };
-
-        element.addEventListener(eventName, listener as EventListener);
-      });
+const awaitEvent = (
+  element: Dialog,
+  eventName: string
+): Promise<CustomEvent> => {
+  return new Promise((res) => {
+    const listener = (e: CustomEvent) => {
+      element.removeEventListener(eventName, listener as EventListener);
+      res(e);
     };
+
+    element.addEventListener(eventName, listener as EventListener);
+  });
+};
 
 const distributedFocusContent = html`
   <my-test-element>
@@ -70,73 +76,56 @@ const distributedFocusContent = html`
       <mwc-button id="wrappedContentButton">wrapped content button</mwc-button>
     </div>
     <mwc-button id="contentButton">content button</mwc-button>
-    <mwc-button
-        slot="primaryAction"
-        data-dialogAction="ok">
-      Ok
-    </mwc-button>
-    <mwc-button
-        slot="secondaryAction">
-      Cancel
-    </mwc-button>
+    <mwc-button slot="primaryAction" data-dialogAction="ok"> Ok </mwc-button>
+    <mwc-button slot="secondaryAction"> Cancel </mwc-button>
   </my-test-element>
 `;
 
-const basic = html`
-  <mwc-dialog></mwc-dialog>
-`;
+const basic = html` <mwc-dialog></mwc-dialog> `;
 
-const opened = html`
-  <mwc-dialog open></mwc-dialog>
-`;
+const opened = html` <mwc-dialog open></mwc-dialog> `;
 
 const withButtons = html`
   <mwc-dialog heading="myTitle" actionAttribute="data-dialogAction">
-    <mwc-button
-        slot="primaryAction"
-        data-dialogAction="ok">
-      Ok
-    </mwc-button>
-    <mwc-button
-        slot="secondaryAction">
-      Cancel
-    </mwc-button>
+    <mwc-button slot="primaryAction" data-dialogAction="ok"> Ok </mwc-button>
+    <mwc-button slot="secondaryAction"> Cancel </mwc-button>
   </mwc-dialog>
 `;
 
-suite('mwc-dialog:', () => {
+suite("mwc-dialog:", () => {
   let fixt: TestFixture;
 
-  suite('basic', () => {
+  suite("basic", () => {
     let element: Dialog;
     setup(async () => {
       fixt = await fixture(basic);
 
-      element = fixt.root.querySelector('mwc-dialog')!;
+      element = fixt.root.querySelector("mwc-dialog")!;
     });
 
-    test('initializes as an mwc-dialog', () => {
+    test("initializes as an mwc-dialog", () => {
       assert.instanceOf(element, Dialog);
     });
 
-    test('Title spacing is not displayed when there is no title', async () => {
-      let titleTag = element.shadowRoot!.querySelector('.mdc-dialog__title');
+    test("Title spacing is not displayed when there is no title", async () => {
+      let titleTag = element.shadowRoot!.querySelector(".mdc-dialog__title");
       assert.isNull(titleTag);
 
-      element.heading = 'This is my Title';
+      element.heading = "This is my Title";
       await element.requestUpdate();
-      titleTag = element.shadowRoot!.querySelector('.mdc-dialog__title');
+      titleTag = element.shadowRoot!.querySelector(".mdc-dialog__title");
       assert.notStrictEqual(titleTag, null);
-      assert.strictEqual(titleTag!.textContent, 'This is my Title');
+      assert.strictEqual(titleTag!.textContent, "This is my Title");
     });
 
-    test('Dialog fires open and close events', async () => {
+    test("Dialog fires open and close events", async () => {
       let openingCalled = false;
       let openedCalled = false;
       let closingCalled = false;
       let closedCalled = false;
       const surfaceElement = element.shadowRoot!.querySelector(
-                                 '.mdc-dialog__surface') as HTMLDivElement;
+        ".mdc-dialog__surface"
+      ) as HTMLDivElement;
 
       element.addEventListener(OPENING_EVENT, () => {
         openingCalled = true;
@@ -165,7 +154,7 @@ suite('mwc-dialog:', () => {
       assert.strictEqual(surfaceElement.offsetWidth, 0);
       assert.strictEqual(surfaceElement.offsetHeight, 0);
 
-      element.heading = 'Basic title';
+      element.heading = "Basic title";
       element.hideActions = true;
       element.open = true;
       await openedPromise;
@@ -193,15 +182,16 @@ suite('mwc-dialog:', () => {
       assert.strictEqual(surfaceElement.offsetHeight, 0);
     });
 
-    test('Scrim closes dialog', async () => {
-      const SCRIM_ACTION = 'SCRIM_CLOSE';
+    test("Scrim closes dialog", async () => {
+      const SCRIM_ACTION = "SCRIM_CLOSE";
       element.scrimClickAction = SCRIM_ACTION;
       element.open = true;
 
       await awaitEvent(element, OPENED_EVENT);
 
-      const scrim = element.shadowRoot!.querySelector('.mdc-dialog__scrim') as
-          HTMLDivElement;
+      const scrim = element.shadowRoot!.querySelector(
+        ".mdc-dialog__scrim"
+      ) as HTMLDivElement;
 
       scrim.click();
 
@@ -211,19 +201,24 @@ suite('mwc-dialog:', () => {
       assert.strictEqual(action, SCRIM_ACTION);
     });
 
-    test('Escape closes dialog', async () => {
-      const ESCAPE_ACTION = 'ESCAPE_CLOSE';
+    test("Escape closes dialog", async () => {
+      const ESCAPE_ACTION = "ESCAPE_CLOSE";
       element.escapeKeyAction = ESCAPE_ACTION;
       element.open = true;
 
       await awaitEvent(element, OPENED_EVENT);
 
-      const init = {detail: 0, bubbles: true, cancelable: true, composed: true};
-      const escDown = new CustomEvent('keydown', init);
-      const escUp = new CustomEvent('keyup', init);
+      const init = {
+        detail: 0,
+        bubbles: true,
+        cancelable: true,
+        composed: true,
+      };
+      const escDown = new CustomEvent("keydown", init);
+      const escUp = new CustomEvent("keyup", init);
 
-      (escDown as unknown as HasKeyCode).keyCode = 27;
-      (escUp as unknown as HasKeyCode).keyCode = 27;
+      ((escDown as unknown) as HasKeyCode).keyCode = 27;
+      ((escUp as unknown) as HasKeyCode).keyCode = 27;
 
       document.dispatchEvent(escDown);
       document.dispatchEvent(escUp);
@@ -234,9 +229,10 @@ suite('mwc-dialog:', () => {
       assert.strictEqual(action, ESCAPE_ACTION);
     });
 
-    test('Hide Actions hides empty whitespace', async () => {
-      const actionsFooter =
-          element.shadowRoot!.querySelector('#actions') as HTMLElement;
+    test("Hide Actions hides empty whitespace", async () => {
+      const actionsFooter = element.shadowRoot!.querySelector(
+        "#actions"
+      ) as HTMLElement;
 
       element.open = true;
       await awaitEvent(element, OPENED_EVENT);
@@ -250,7 +246,7 @@ suite('mwc-dialog:', () => {
       assert.strictEqual(actionsFooter.offsetHeight, 0);
     });
 
-    test('declaratively opens', async () => {
+    test("declaratively opens", async () => {
       const fixt = await fixture(opened);
       const element = fixt.root.firstElementChild as Dialog;
 
@@ -278,7 +274,7 @@ suite('mwc-dialog:', () => {
     });
   });
 
-  suite('with actions', () => {
+  suite("with actions", () => {
     let element: Dialog;
     let distFocusFixt: TestFixture;
 
@@ -289,7 +285,7 @@ suite('mwc-dialog:', () => {
       distFocusFixt = await fixture(distributedFocusContent);
     });
 
-    test('Actions close dialog', async () => {
+    test("Actions close dialog", async () => {
       element.open = true;
       await awaitEvent(element, OPENED_EVENT);
 
@@ -300,8 +296,9 @@ suite('mwc-dialog:', () => {
       });
 
       const primary = element.querySelector('[slot="primaryAction"]') as Button;
-      const secondary =
-          element.querySelector('[slot="secondaryAction"]') as Button;
+      const secondary = element.querySelector(
+        '[slot="secondaryAction"]'
+      ) as Button;
 
       secondary.click();
 
@@ -312,24 +309,24 @@ suite('mwc-dialog:', () => {
       const action = await awaitEvent(element, CLOSED_EVENT);
 
       assert.isTrue(closedCalled);
-      assert.strictEqual(action.detail.action, 'ok');
+      assert.strictEqual(action.detail.action, "ok");
 
       closedCalled = false;
 
       element.open = true;
       await awaitEvent(element, OPENED_EVENT);
 
-      secondary.setAttribute('data-dialogAction', 'cancel');
+      secondary.setAttribute("data-dialogAction", "cancel");
 
       secondary.click();
 
       const secondaryAction = await awaitEvent(element, CLOSED_EVENT);
 
       assert.isTrue(closedCalled);
-      assert.strictEqual(secondaryAction.detail.action, 'cancel');
+      assert.strictEqual(secondaryAction.detail.action, "cancel");
     });
 
-    test('Initial focus attribute focuses', async () => {
+    test("Initial focus attribute focuses", async () => {
       const button = element.firstElementChild as Button;
 
       assert.isNull(fixt.root.activeElement);
@@ -346,7 +343,7 @@ suite('mwc-dialog:', () => {
 
       assert.isNull(fixt.root.activeElement);
 
-      button.setAttribute('dialogInitialFocus', '');
+      button.setAttribute("dialogInitialFocus", "");
 
       element.open = true;
 
@@ -355,102 +352,111 @@ suite('mwc-dialog:', () => {
       assert.strictEqual(fixt.root.activeElement, button);
     });
 
-    test('initial focus not in light dom but still distributed', async () => {
+    test("initial focus not in light dom but still distributed", async () => {
       const testElement = distFocusFixt.root.firstElementChild!;
       const root = testElement.shadowRoot!;
-      element = root.querySelector('mwc-dialog')!;
+      element = root.querySelector("mwc-dialog")!;
 
       await element.updateComplete;
 
       // secondary
-      const primaryButton =
-          testElement.querySelector('[slot="primaryAction"]') as Button;
+      const primaryButton = testElement.querySelector(
+        '[slot="primaryAction"]'
+      ) as Button;
 
-      primaryButton.setAttribute('dialogInitialFocus', '');
+      primaryButton.setAttribute("dialogInitialFocus", "");
 
       element.open = true;
 
       await awaitEvent(element, OPENED_EVENT);
 
       assert.strictEqual(
-          primaryButton.shadowRoot!.activeElement,
-          primaryButton.shadowRoot!.querySelector('button'),
-          'root slotted primary action is focused');
+        primaryButton.shadowRoot!.activeElement,
+        primaryButton.shadowRoot!.querySelector("button"),
+        "root slotted primary action is focused"
+      );
 
       element.open = false;
 
       await awaitEvent(element, CLOSED_EVENT);
 
-      primaryButton.removeAttribute('dialogInitialFocus');
+      primaryButton.removeAttribute("dialogInitialFocus");
 
       // secondary
-      const secondaryButton =
-          testElement.querySelector('[slot="secondaryAction"]') as Button;
+      const secondaryButton = testElement.querySelector(
+        '[slot="secondaryAction"]'
+      ) as Button;
 
-      secondaryButton.setAttribute('dialogInitialFocus', '');
+      secondaryButton.setAttribute("dialogInitialFocus", "");
 
       element.open = true;
 
       await awaitEvent(element, OPENED_EVENT);
 
       assert.strictEqual(
-          secondaryButton.shadowRoot!.activeElement,
-          secondaryButton.shadowRoot!.querySelector('button'),
-          'root slotted secondary action is focused');
+        secondaryButton.shadowRoot!.activeElement,
+        secondaryButton.shadowRoot!.querySelector("button"),
+        "root slotted secondary action is focused"
+      );
 
       element.open = false;
 
       await awaitEvent(element, CLOSED_EVENT);
 
-      secondaryButton.removeAttribute('dialogInitialFocus');
+      secondaryButton.removeAttribute("dialogInitialFocus");
 
       // secondary
-      const contentButton =
-          testElement.querySelector('#contentButton') as Button;
+      const contentButton = testElement.querySelector(
+        "#contentButton"
+      ) as Button;
 
-      contentButton.setAttribute('dialogInitialFocus', '');
+      contentButton.setAttribute("dialogInitialFocus", "");
 
       element.open = true;
 
       await awaitEvent(element, OPENED_EVENT);
 
       assert.strictEqual(
-          contentButton.shadowRoot!.activeElement,
-          contentButton.shadowRoot!.querySelector('button'),
-          'root slotted content focused');
+        contentButton.shadowRoot!.activeElement,
+        contentButton.shadowRoot!.querySelector("button"),
+        "root slotted content focused"
+      );
 
       element.open = false;
 
       await awaitEvent(element, CLOSED_EVENT);
 
-      contentButton.removeAttribute('dialogInitialFocus');
+      contentButton.removeAttribute("dialogInitialFocus");
 
       // wrapped
-      const wrappedContentButton =
-          testElement.querySelector('#wrappedContentButton') as Button;
+      const wrappedContentButton = testElement.querySelector(
+        "#wrappedContentButton"
+      ) as Button;
 
-      wrappedContentButton.setAttribute('dialogInitialFocus', '');
+      wrappedContentButton.setAttribute("dialogInitialFocus", "");
 
       element.open = true;
 
       await awaitEvent(element, OPENED_EVENT);
 
       assert.strictEqual(
-          wrappedContentButton.shadowRoot!.activeElement,
-          wrappedContentButton.shadowRoot!.querySelector('button'),
-          'wrapped slotted content focused');
+        wrappedContentButton.shadowRoot!.activeElement,
+        wrappedContentButton.shadowRoot!.querySelector("button"),
+        "wrapped slotted content focused"
+      );
 
       element.open = false;
 
       await awaitEvent(element, CLOSED_EVENT);
 
-      wrappedContentButton.removeAttribute('dialogInitialFocus');
+      wrappedContentButton.removeAttribute("dialogInitialFocus");
     });
 
-    test('Stacking reverses actions', async () => {
+    test("Stacking reverses actions", async () => {
       const primary = element.querySelector('[slot="primaryAction"]') as Button;
-      const secondary =
-          element.querySelector('[slot="secondaryAction"]') as Button;
+      const secondary = element.querySelector(
+        '[slot="secondaryAction"]'
+      ) as Button;
 
       element.open = true;
 
@@ -475,14 +481,14 @@ suite('mwc-dialog:', () => {
       assert.isTrue(secondary.offsetTop > primary.offsetTop);
     });
 
-    test('Enter clicks primary action', async () => {
-      const mdcRoot = element.shadowRoot!.querySelector('.mdc-dialog');
-      assert.isTrue(!!mdcRoot, 'root has rendered');
+    test("Enter clicks primary action", async () => {
+      const mdcRoot = element.shadowRoot!.querySelector(".mdc-dialog");
+      assert.isTrue(!!mdcRoot, "root has rendered");
 
       let clickCalled = false;
       const primary = element.querySelector('[slot="primaryAction"]') as Button;
 
-      primary.addEventListener('click', () => {
+      primary.addEventListener("click", () => {
         clickCalled = true;
       });
 
@@ -491,21 +497,25 @@ suite('mwc-dialog:', () => {
 
       assert.isFalse(clickCalled);
 
-      const init = {detail: 0, bubbles: true, cancelable: true, composed: true};
-      const enterDown = new CustomEvent('keydown', init);
-      const enterUp = new CustomEvent('keyup', init);
+      const init = {
+        detail: 0,
+        bubbles: true,
+        cancelable: true,
+        composed: true,
+      };
+      const enterDown = new CustomEvent("keydown", init);
+      const enterUp = new CustomEvent("keyup", init);
 
-      (enterDown as unknown as HasKeyCode).keyCode = 13;
-      (enterUp as unknown as HasKeyCode).keyCode = 13;
+      ((enterDown as unknown) as HasKeyCode).keyCode = 13;
+      ((enterUp as unknown) as HasKeyCode).keyCode = 13;
 
       mdcRoot!.dispatchEvent(enterDown);
       mdcRoot!.dispatchEvent(enterUp);
 
-
       const action = await awaitEvent(element, CLOSED_EVENT);
       assert.isTrue(clickCalled);
 
-      assert.strictEqual(action.detail.action, 'ok');
+      assert.strictEqual(action.detail.action, "ok");
     });
 
     teardown(async () => {
@@ -524,11 +534,11 @@ suite('mwc-dialog:', () => {
     });
   });
 
-  suite('disconnecting', () => {
+  suite("disconnecting", () => {
     let container: HTMLElement;
 
     setup(() => {
-      container = document.createElement('div');
+      container = document.createElement("div");
       document.body.appendChild(container);
     });
 
@@ -536,8 +546,8 @@ suite('mwc-dialog:', () => {
       document.body.removeChild(container);
     });
 
-    test('open event is cancelled when disconnected', async () => {
-      const dialog = document.createElement('mwc-dialog');
+    test("open event is cancelled when disconnected", async () => {
+      const dialog = document.createElement("mwc-dialog");
       let sawOpenEvent = false;
       dialog.addEventListener(OPENED_EVENT, () => {
         sawOpenEvent = true;
@@ -555,8 +565,8 @@ suite('mwc-dialog:', () => {
       assert.isFalse(sawOpenEvent);
     });
 
-    test('maintains open state when disconnected and reconnected', async () => {
-      const dialog = document.createElement('mwc-dialog');
+    test("maintains open state when disconnected and reconnected", async () => {
+      const dialog = document.createElement("mwc-dialog");
       container.appendChild(dialog);
       dialog.open = true;
       await awaitEvent(dialog, OPENED_EVENT);

@@ -49,7 +49,7 @@ export const lineRipple = directive(() => (part: PropertyPart) => {
     const adapter = createAdapter(lineElement);
     const foundation = new MDCLineRippleFoundation(adapter);
     foundation.init();
-    part.setValue(foundation);
+    part._setValue(foundation);
     partToFoundationMap.set(part, foundation);
   }
 });

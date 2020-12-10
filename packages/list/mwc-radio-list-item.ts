@@ -15,7 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {customElement} from 'lit-element';
+import {customElement} from 'lit-element/lib/decorators';
 
 import {style as controlStyle} from './mwc-control-list-item-css';
 import {style} from './mwc-list-item-css';
